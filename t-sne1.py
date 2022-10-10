@@ -59,7 +59,7 @@ def seach_prob(x, tol =1e-5, perplexity = 30.0):
         #记录该复杂度下经过二分法找到的prob值 pair_prob为n*n矩阵 即pij代表第j个点附近复杂度个点对应的概率分布
         pair_prob[i,] = this_prob
     print("方差平均值为:",np.mean(np.sqrt(1 / beta)))
-    Note.write("方差平均值为:",np.mean(np.sqrt(1 / beta)))
+    Note.write("方差平均值为: %s \n"%np.mean(np.sqrt(1 / beta)))
     return pair_prob#得到pij概率分布矩阵
 
 def pca(x,no_dims= 50):#先利用PCA进行降维
@@ -135,7 +135,8 @@ def tsne(x, no_dims=2, initial_dims=50, perplexity=50.0, max_iter=10000):
                 C = np.sum(P/4 * np.log( P/4 / Q))
 
             print("第 ",(iter+1), "次迭代的损失为:",C)
-            Note.write("第 ",(iter+1), "次迭代的损失为:",C,"\n")
+            Note.write("第%s"%(iter+1))
+            Note.write("次迭代的损失为:%s\n"%C)
         if iter == 100:
             P = P/4
     print("完成训练!")
