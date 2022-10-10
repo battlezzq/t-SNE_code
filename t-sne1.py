@@ -2,7 +2,6 @@
 """t-SNE对手写数字进行可视化"""
 from sklearn import manifold
 import numpy as np
-import pylab
 import matplotlib.pyplot as plt
 import time
 tsne=manifold.TSNE
@@ -30,6 +29,7 @@ def seach_prob(x, tol =1e-5, perplexity = 30.0):
     for i in range(n):#对每个点
         if i % 500 == 0:
             print('计算第 %s 个点的概率，共 %s 个点'%(i,n))
+            Note.write('计算第 %s 个点的概率，共 %s 个点 \n'%(i,n))
         # 初始化beta 高斯分布的参数
         betamin = -np.inf
         betamax = np.inf
@@ -59,10 +59,12 @@ def seach_prob(x, tol =1e-5, perplexity = 30.0):
         #记录该复杂度下经过二分法找到的prob值 pair_prob为n*n矩阵 即pij代表第j个点附近复杂度个点对应的概率分布
         pair_prob[i,] = this_prob
     print("方差平均值为:",np.mean(np.sqrt(1 / beta)))
+    Note.write("方差平均值为:",np.mean(np.sqrt(1 / beta)))
     return pair_prob#得到pij概率分布矩阵
 
 def pca(x,no_dims= 50):#先利用PCA进行降维
     print("利用PCA对数据进行预处理中......")
+    Note.write("利用PCA对数据进行预处理中......")
     (n,d) = x.shape
     x = x - np.tile(np.mean(x,0),(n,1))#先计算每个样本点的均值即np.mean(x,0)得到1*n的均值矩阵，再利用tile进行拓展平铺得到每一行都相等的n*n的均值矩阵
     l, M = np.linalg.eig(np.dot(x.T,x))
@@ -133,19 +135,23 @@ def tsne(x, no_dims=2, initial_dims=50, perplexity=50.0, max_iter=10000):
                 C = np.sum(P/4 * np.log( P/4 / Q))
 
             print("第 ",(iter+1), "次迭代的损失为:",C)
+            Note.write("第 ",(iter+1), "次迭代的损失为:",C,"\n")
         if iter == 100:
             P = P/4
     print("完成训练!")
+    Note.write('完成训练！')
     return y
 
 if __name__ == "__main__":
+    Note=open('record.txt',mode='w')
     start_time = time.time()
     X = np.loadtxt("mnist2500_X.txt")
     labels = np.loadtxt("mnist2500_labels.txt")
-    Y = tsne(X, 2, 50, 20.0)
+    Y = tsne(X, 2, 50)
     end_time = time.time()
     running_time = end_time - start_time
     print(running_time)
     from matplotlib import pyplot as plt
     plt.scatter(Y[:,0], Y[:,1], 20, labels)
+    plt.savefig("t-SNE_img")
     plt.show()
